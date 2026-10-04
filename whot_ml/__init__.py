@@ -52,6 +52,15 @@ from whot_ml.serializer import (
     serialize_to_json,
     restore_from_json,
 )
+from whot_ml.metrics import (
+    EpisodeMetrics,
+    MetricsCollector,
+    BatchMetrics,
+    aggregate_metrics,
+)
+from whot_ml.environment import GameEnvironment, EnvStepResult
+from whot_ml.agents import Agent, RandomLegalAgent, RuleBasedAgent
+from whot_ml.runner import play_game, run_batch_evaluation
 
 __all__ = [
     "BASELINE_ENVIRONMENT",
@@ -105,4 +114,15 @@ __all__ = [
     "restore_state",
     "serialize_to_json",
     "restore_from_json",
+    "EpisodeMetrics",
+    "MetricsCollector",
+    "BatchMetrics",
+    "aggregate_metrics",
+    "GameEnvironment",
+    "EnvStepResult",
+    "Agent",
+    "RandomLegalAgent",
+    "RuleBasedAgent",
+    "play_game",
+    "run_batch_evaluation",
 ]
