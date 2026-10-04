@@ -43,6 +43,8 @@ from whot_ml.turn_manager import TurnManager, TurnModifier
 from whot_ml.invariants import InvariantValidator, InvariantViolationError
 from whot_ml.state import GameState
 from whot_ml.rules_engine import RulesEngine, IllegalActionError
+from whot_ml.event import Event, EventType
+from whot_ml.effect_resolver import EffectResolver, StepResult
 
 __all__ = [
     "BASELINE_ENVIRONMENT",
@@ -86,4 +88,8 @@ __all__ = [
     "GameState",
     "RulesEngine",
     "IllegalActionError",
+    "Event",
+    "EventType",
+    "EffectResolver",
+    "StepResult",
 ]

@@ -213,6 +213,31 @@ def test_pick_three_penalty_defense():
     assert "CIRCLE_2" not in played_card_ids  # Cannot defend Pick 3 with Pick 2 in baseline SAME_EFFECT
 
 
+def test_cross_penalty_defense_rejected():
+    """Verify 5 cannot defend Pick Two, and 2 cannot defend Pick Three under SAME_EFFECT."""
+    state = GameState.create_initial_state(seed=42)
+    p = state.current_player
+
+    # Pick 2 active
+    state.active_penalty_type = SpecialEffect.PICK_TWO
+    state.active_penalty_count = 2
+    state.play_pile = [CANONICAL_CARD_BY_ID["CIRCLE_2"]]
+    state.hands[p] = [CANONICAL_CARD_BY_ID["CIRCLE_5"]]  # Matches shape, but is a 5!
+
+    actions_p2 = RulesEngine.legal_actions(state)
+    assert not any(a.action_type == ActionType.PLAY for a in actions_p2)
+
+    # Pick 3 active
+    state.active_penalty_type = SpecialEffect.PICK_THREE
+    state.active_penalty_count = 3
+    state.play_pile = [CANONICAL_CARD_BY_ID["CIRCLE_5"]]
+    state.hands[p] = [CANONICAL_CARD_BY_ID["CIRCLE_2"]]  # Matches shape, but is a 2!
+
+    actions_p3 = RulesEngine.legal_actions(state)
+    assert not any(a.action_type == ActionType.PLAY for a in actions_p3)
+
+
+
 def test_declaration_action_legality():
     """Verify DECLARE_LAST is legal only when hand_size == 1 and not yet declared."""
     state = GameState.create_initial_state(seed=42)
