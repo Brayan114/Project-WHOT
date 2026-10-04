@@ -45,6 +45,13 @@ from whot_ml.state import GameState
 from whot_ml.rules_engine import RulesEngine, IllegalActionError
 from whot_ml.event import Event, EventType
 from whot_ml.effect_resolver import EffectResolver, StepResult
+from whot_ml.observation import PlayerObservation, ObservationGenerator
+from whot_ml.serializer import (
+    serialize_state,
+    restore_state,
+    serialize_to_json,
+    restore_from_json,
+)
 
 __all__ = [
     "BASELINE_ENVIRONMENT",
@@ -92,4 +99,10 @@ __all__ = [
     "EventType",
     "EffectResolver",
     "StepResult",
+    "PlayerObservation",
+    "ObservationGenerator",
+    "serialize_state",
+    "restore_state",
+    "serialize_to_json",
+    "restore_from_json",
 ]

@@ -74,12 +74,24 @@ class EffectResolver:
         if len(state.hands[player]) != 1:
             state.last_card_declared[player] = False
 
+        # Public event: Player drew a card (card_id hidden from public)
         events.append(
             Event(
                 event_type=EventType.CARD_DRAWN,
                 timestep=state.timestep,
                 player=player,
+                card_id=None,
+                is_public=True,
+            )
+        )
+        # Private event: Card identity visible only to recipient
+        events.append(
+            Event(
+                event_type=EventType.PRIVATE_CARD_RECEIVED,
+                timestep=state.timestep,
+                player=player,
                 card_id=card.id,
+                is_public=False,
             )
         )
         return card
