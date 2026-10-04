@@ -72,6 +72,21 @@ def test_distribution_per_shape():
     assert all(c.is_whot for c in whot_cards)
 
 
+def test_explicit_canonical_shape_counts():
+    """Explicitly verify the Phase 0 specification (P0-D1/P0-D3) canonical shape counts:
+    Circle: 12, Triangle: 12, Cross: 9, Square: 9, Star: 7, WHOT: 5 = 54 cards total.
+    """
+    from collections import Counter
+    counts = Counter(c.shape for c in CANONICAL_DECK)
+    assert counts[Shape.CIRCLE] == 12
+    assert counts[Shape.TRIANGLE] == 12
+    assert counts[Shape.CROSS] == 9
+    assert counts[Shape.SQUARE] == 9
+    assert counts[Shape.STAR] == 7
+    assert counts[Shape.WHOT] == 5
+    assert sum(counts.values()) == 54
+
+
 def test_special_effect_assignments():
     """Verify baseline special effect mappings on physical cards."""
     # 1 -> HOLD_ON
