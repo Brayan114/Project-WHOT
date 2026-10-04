@@ -38,6 +38,11 @@ from whot_ml.action import (
     make_draw_action,
     make_declare_last_action,
 )
+from whot_ml.rng_manager import RNGManager
+from whot_ml.turn_manager import TurnManager, TurnModifier
+from whot_ml.invariants import InvariantValidator, InvariantViolationError
+from whot_ml.state import GameState
+from whot_ml.rules_engine import RulesEngine, IllegalActionError
 
 __all__ = [
     "BASELINE_ENVIRONMENT",
@@ -73,4 +78,12 @@ __all__ = [
     "make_play_whot_action",
     "make_draw_action",
     "make_declare_last_action",
+    "RNGManager",
+    "TurnManager",
+    "TurnModifier",
+    "InvariantValidator",
+    "InvariantViolationError",
+    "GameState",
+    "RulesEngine",
+    "IllegalActionError",
 ]
