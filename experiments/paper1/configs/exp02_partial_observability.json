@@ -1,0 +1,18 @@
+{
+  "experiment_id": "EXP-02-PARTIAL-OBS",
+  "description": "Partial Observability Demonstration: Observationally equivalent states and trajectory divergence",
+  "ruleset_name": "WHOT-NG-v1",
+  "player_count": 4,
+  "observing_player": 0,
+  "pilot_source_games": 10,
+  "full_source_games": 50,
+  "pilot_seed_base": 20000,
+  "full_seed_base": 20000,
+  "stages": [
+    {"name": "early", "timestep": 5},
+    {"name": "mid", "timestep": 15},
+    {"name": "late", "timestep": 25}
+  ],
+  "rollout_max_steps": 20,
+  "rollout_seed": 42
+}

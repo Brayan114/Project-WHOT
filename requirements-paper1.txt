@@ -1,0 +1,9 @@
+# Pinned dependencies for WHOT-ML Paper 1 experimental apparatus
+# Python >= 3.9 (validated on Python 3.9.13)
+# Simulator core (whot_ml/) has 0 external dependencies (pure Python standard library)
+
+pytest==8.4.2
+matplotlib==3.9.4
+numpy==2.0.2
+scipy==1.13.1
+kaggle==1.7.4.5

@@ -1,0 +1,46 @@
+{
+  "experiment_id": "EXP-05-RULE-VARIANTS",
+  "description": "Controlled Rule Variants evaluated via matched seeds against baseline WHOT-NG-v1",
+  "baseline_environment": "WHOT-NG-v1",
+  "player_count": 4,
+  "agent_population": ["rule_based", "random", "random", "random"],
+  "pilot_games_per_variant": 20,
+  "full_games_per_variant": 500,
+  "pilot_seed_base": 50000,
+  "full_seed_base": 50000,
+  "variants": [
+    {
+      "variant_id": "VAR-BASE",
+      "description": "Baseline WHOT-NG-v1 default rules",
+      "overrides": {}
+    },
+    {
+      "variant_id": "VAR-NO-STACK-2",
+      "description": "Pick-2 penalty stacking disabled",
+      "overrides": {
+        "pick_two_stacking": "NO_STACKING"
+      }
+    },
+    {
+      "variant_id": "VAR-NO-STACK-3",
+      "description": "Pick-3 penalty stacking disabled",
+      "overrides": {
+        "pick_three_stacking": "NO_STACKING"
+      }
+    },
+    {
+      "variant_id": "VAR-NO-DECL",
+      "description": "Last-card declaration rule disabled",
+      "overrides": {
+        "last_card_declaration_enabled": false
+      }
+    },
+    {
+      "variant_id": "VAR-PENALTY-2",
+      "description": "Last-card declaration violation penalty increased to DRAW_2",
+      "overrides": {
+        "last_card_violation_penalty": "DRAW_2"
+      }
+    }
+  ]
+}

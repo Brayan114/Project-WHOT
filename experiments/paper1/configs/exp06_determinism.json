@@ -1,0 +1,12 @@
+{
+  "experiment_id": "EXP-06-DETERMINISM",
+  "description": "Bitwise event-level determinism replay and checkpoint restoration verification",
+  "ruleset_name": "WHOT-NG-v1",
+  "player_count": 4,
+  "pilot_games": 20,
+  "full_games": 100,
+  "pilot_seed_base": 60000,
+  "full_seed_base": 60000,
+  "checkpoint_step": 10,
+  "agent_population": ["random", "random", "random", "random"]
+}

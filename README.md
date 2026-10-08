@@ -1,208 +1,116 @@
-# WHOT-ML — Nigerian WHOT Research Simulator
+# WHOT-ML: A Configurable Partially Observable Multi-Agent Environment for Machine Learning Research
 
-**Version:** 0.1.0 (`WHOT-NG-v1.0` Frozen Baseline)  
-**Research Program:** WHOT-ML (Papers 1–4)  
-**Specification:** Phase 0 Formalization (P0-D1 to P0-D5 v0.1)
+**WHOT-ML** is an open-source, deterministic, and modular multi-agent reinforcement learning environment based on **WHOT**, the widely played card game in Nigeria. Designed as a rigorous benchmark for research under partial observability, non-stationarity, and dynamic action masking, WHOT-ML formalizes the game as an extensive-form multi-agent POMDP. The platform guarantees strict information isolation (zero private-card leakage), bitwise deterministic reproducibility, configurable rule mechanics, and a standardized 76-slot discrete action space.
 
 ---
 
-## 1. Overview
+## What is WHOT-ML?
 
-**WHOT-ML** is a deterministic, partially observable, multi-agent card-game research environment based on standard Nigerian WHOT. Built strictly for scientific machine-learning and reinforcement-learning research, it prioritizes:
+WHOT is a competitive shedding card game played with a dedicated 54-card deck of geometric suits (Circle, Triangle, Cross, Square, Star) and wild "WHOT" cards. Players match cards by shape or face value while deploying tactical special effects—such as chaining draw penalties ("Pick Two", "Pick Three"), skipping opponents ("Suspension"), forcing table-wide draws ("General Market"), or commanding new active suits. 
 
-1. **Mechanical correctness** — 100% faithful to the formal rules of Nigerian WHOT (P0-D1).
-2. **Strict information boundaries** — Genuine hidden information separation: an agent's observation never exposes opponent hands, draw-pile order, future cards, or simulator RNG state (P0-D2).
-3. **Deterministic reproducibility** — Given identical seeds, rulesets, and action sequences, simulations produce bitwise identical states and event logs (P0-D4, P0-D5).
-4. **Ruleset configurability** — Every gameplay parameter is explicitly defined in `WHOTConfig`, allowing cross-ruleset and rule-variant transfer experiments without rewriting the engine.
-5. **Machine-learning readiness** — Standard Gymnasium/PettingZoo-aligned discrete action space (76 frozen actions) with legal action masking.
+Crucially, players hold private hands, draw from a hidden deck that reshuffles upon depletion, and must declare before playing their final card. These mechanics generate deep information asymmetry, belief estimation challenges ($|\mathcal{S}(\Omega)| > 10^{32}$ states consistent with typical observations), and complex multi-agent defense dynamics.
 
 ---
 
-## 2. Baseline Environment: WHOT-NG-v1
+## What's in This Repository?
 
-The reference baseline environment (`WHOT-NG-v1`) defines the standard Nigerian ruleset:
-
-- **Deck**: 54 physical cards (49 ordinary suit cards across Circle, Triangle, Cross, Square, Star + 5 wild WHOT cards).
-- **Players**: 4 players (configurable 2–6).
-- **Starting Hand**: 6 cards dealt in clockwise round-robin order.
-- **Direction**: Clockwise.
-- **Normal Play**: Match current required shape OR match top card value OR play wild WHOT.
-- **Draw Restriction**: If a legal playable card exists in hand, `DRAW` is strictly illegal. If no playable card exists, `DRAW` is the only legal normal card action. The drawn card cannot be played immediately.
-- **Card 1 (Hold On)**: Grants the current player another turn (`EXTRA_TURN`). Cannot be used as the winning final card (`final_card_one_policy = REJECT_LEGALITY`).
-- **Card 2 (Pick Two)**: Penalty of 2 cards. Defended only by another 2. Consecutive 2s stack (+2 each).
-- **Card 5 (Pick Three)**: Penalty of 3 cards. Defended only by another 5. Consecutive 5s stack (+3 each).
-- **Card 8 (Suspension)**: The next player in turn order is skipped (`SKIP_NEXT`).
-- **Card 14 (General Market)**: Every other active player in clockwise order draws exactly 1 card.
-- **Card 20 (WHOT)**: Wild card. The playing player chooses one of the five ordinary shapes to become the active required shape. Cannot defend active Pick Two or Pick Three penalties.
-- **Last-Card Declaration**: When a player has 1 card in hand, they must declare (`DECLARE_LAST`). If an undeclared final card is played to win, the attempted victory is rejected, a `LAST_CARD_DECLARATION_VIOLATION` event is logged, the player draws 1 penalty card, and the game continues.
-- **Market Exhaustion**: When the market is empty, the top card of the play pile is preserved, and all previously played cards underneath are shuffled into a new market.
-- **Scoring**: Terminal zero-sum rewards: winner receives `+1.0`, all losers receive `-1.0`.
+- **`whot_ml/`** — Core simulation engine (`WHOT-NG-v1.0`, v1.0.0, frozen baseline at commit `7c1a2dc`). Includes state managers, turn sequencing, legal action masking, and baseline agents (`RandomLegalAgent`, `RuleBasedAgent`).
+- **`tests/`** — Comprehensive test suite containing 109 unit, integration, and property invariant tests.
+- **`experiments/paper1/`** — Experimental harnesses, formal JSON configurations, analysis scripts, and publication figures/tables for the Paper 1 evaluation campaign.
+- **`docs/`** — Formal Phase 0/1 specifications, rules ontology, mathematical proofs, and independent scientific audits.
+- **`WHOT-ML Paper 1 — Manuscript v1.0.md`** — Full research manuscript ready for preprint and peer review.
+- **`CITATION.cff`** — Machine-readable citation metadata.
+- **`LICENSE`** — Permissive MIT open-source license.
 
 ---
 
-## 3. Architecture & Modular Design
+## Installation
 
-The codebase enforces strict separation of responsibilities:
+WHOT-ML requires Python 3.9 or higher.
 
-```text
-whot_ml/
-├── __init__.py                  # Public exports
-├── version.py                   # Simulator and baseline environment version
-├── card.py                      # Physical cards, shapes, suits, canonical 54-card deck
-├── ruleset.py                   # WHOTConfig and baseline parameters
-├── action.py                    # Frozen 76-action space and bidirectional mapping
-├── state.py                     # Full ground-truth GameState (all hands, market, RNG)
-├── turn_manager.py              # Turn sequencing, clockwise progression, skip/extra turns
-├── rng_manager.py               # Deterministic seed-controlled random number generator
-├── invariants.py                # Strict card conservation, uniqueness, and state checks
-├── rules_engine.py              # Playability checking, legal action generation, action masking
-├── effect_resolver.py           # Resolution pipeline for special cards, penalties, market, victory
-├── event.py                     # Public and private structured event definitions
-├── observation.py               # PlayerObservation and ObservationGenerator (information boundary)
-├── serializer.py                # Lossless serialization and restoration of GameState
-├── metrics.py                   # Episode metrics and batch statistics aggregation
-├── environment.py               # Unified GameEnvironment research API
-├── runner.py                    # Headless game and batch evaluation harness
-└── agents/
-    ├── base.py                  # Abstract Agent class
-    ├── random_agent.py          # Uniform RandomLegalAgent
-    └── rule_based_agent.py      # Transparent heuristic RuleBasedAgent
-```
-
----
-
-## 4. Frozen 76-Action Space
-
-The action space is permanently mapped to 76 discrete action indices:
-
-| Action Indices | Action Type | Description |
-|:---|:---|:---|
-| `0` – `48` | `PLAY` | Play an ordinary physical card (49 cards in canonical order: Circle 1..14, Triangle 1..14, Cross 1..14, Square 1..14, Star 1..8) |
-| `49` – `73` | `PLAY_WHOT` | Play one of the 5 WHOT cards with a selected shape (5 cards × 5 shapes: Circle, Triangle, Cross, Square, Star) |
-| `74` | `DRAW` | Draw from the market (legal only when no playable cards exist or taking penalties) |
-| `75` | `DECLARE_LAST` | Declare having 1 card remaining (legal only when hand size is 1 and undeclared) |
-
----
-
-## 5. Information Boundary Architecture
-
-To support research in imperfect-information games (e.g. Paper 3 hidden-hand inference):
-
-```text
-             ┌─────────────────────────┐
-             │   Complete World State  │
-             │       (GameState)       │
-             └────────────┬────────────┘
-                          │
-            ObservationGenerator.generate()
-                          │
-                          ▼
-             ┌─────────────────────────┐
-             │    PlayerObservation    │  <--- STRICT INFORMATION BOTTLENECK
-             │ (own hand, public pile, │       - Zero opponent cards
-             │  call, public counts)   │       - Zero market ordering
-             └────────────┬────────────┘       - Zero RNG state
-                          │
-                          ▼
-                   ┌─────────────┐
-                   │    Agent    │
-                   └─────────────┘
-```
-
-- **Leakage Auditing**: Tested via automated property tests where two states with identical public state and Player 0 hand, but completely swapped opponent hands, produce strictly equal `PlayerObservation` objects (`obs_A == obs_B`).
-- **Event Visibility**: Public `CARD_DRAWN` events omit card identities (`card_id = None`), while private `PRIVATE_CARD_RECEIVED` events are delivered exclusively to the drawing player.
-
----
-
-## 6. Quick Start & Usage Examples
-
-### Running a Game with Baseline Agents
-
-```python
-from whot_ml.environment import GameEnvironment
-from whot_ml.agents import RandomLegalAgent, RuleBasedAgent
-
-# Create environment and agents
-env = GameEnvironment()
-agents = {
-    0: RuleBasedAgent(name="RuleBased-0", seed=42),
-    1: RandomLegalAgent(name="Random-1", seed=43),
-    2: RandomLegalAgent(name="Random-2", seed=44),
-    3: RandomLegalAgent(name="Random-3", seed=45),
-}
-
-# Reset environment
-obs_dict = env.reset(seed=1000)
-
-terminated = False
-truncated = False
-
-while not (terminated or truncated):
-    curr = env.current_player
-    obs = env.observe(curr)
-    action = agents[curr].act(obs)
-    step_result = env.step(action, acting_player=curr)
-    
-    terminated = step_result.terminated
-    truncated = step_result.truncated
-
-print(f"Winner: Player {env.winner} in {env.state.turn_count} turns!")
-```
-
-### Running Batch Evaluations
-
-```python
-from whot_ml.agents import RandomLegalAgent, RuleBasedAgent
-from whot_ml.runner import run_batch_evaluation
-
-agents = {
-    0: RuleBasedAgent(name="RuleBased-0", seed=1),
-    1: RandomLegalAgent(name="Random-1", seed=2),
-    2: RandomLegalAgent(name="Random-2", seed=3),
-    3: RandomLegalAgent(name="Random-3", seed=4),
-}
-
-# Run 100 independent seeded games
-batch = run_batch_evaluation(agents, num_games=100, base_seed=50000)
-print(batch.summary())
-```
-
----
-
-## 7. Testing Strategy
-
-The test suite contains 85+ unit, integration, and property tests organized by subsystem:
-
-- `test_deck.py`: 54 cards distribution, uniqueness, and immutability.
-- `test_action_space.py`: Frozen 76-action space bijection and boundaries.
-- `test_ruleset.py`: Ruleset configuration and serialization round-trip.
-- `test_rng.py`: Controlled RNG determinism and checkpointing.
-- `test_turn_manager.py`: Clockwise, skip, and extra turn progression.
-- `test_game_state.py`: Dealing mechanics and initial card policies.
-- `test_invariants.py`: Invariant validation and diagnostic failure reporting.
-- `test_rules_engine.py`: Matching rules, draw restrictions, penalty defense, declaration legality.
-- `test_effects.py`: Individual special card effects (1, 2, 5, 8, 14, 20).
-- `test_market_semantics.py`: Market ordering and discard pile recycling.
-- `test_declaration_and_victory.py`: Declaration state-machine and terminal victory.
-- `test_combined_interactions.py`: Multi-effect interactions and edge cases.
-- `test_victory_pipeline_order.py`: Strict pipeline order regression test.
-- `test_information_leakage.py`: 6 critical information-boundary and serialization tests.
-- `test_god_agent_boundary.py`: Validation tool boundary test.
-- `test_event_visibility.py`: Public vs private event streams.
-- `test_environment_api.py`: Lifecycle, turn enforcement, and truncation.
-- `test_baseline_agents.py`: RandomLegalAgent and RuleBasedAgent heuristics.
-- `test_multi_game_evaluation.py`: Batch evaluation across player counts.
-- `test_property_invariants.py`: 50-game per-step invariant validation.
-- `test_reproducibility.py`: Deterministic replay and seed schedule consistency.
-- `test_information_boundary_stress.py`: Comprehensive attribute and JSON audit.
-
-Execute all tests:
 ```bash
-pytest -v
+# Clone repository
+git clone https://github.com/Brayan114/Project-WHOT.git
+cd Project-WHOT
+
+# Install dependencies
+pip install -r requirements-paper1.txt
 ```
 
 ---
 
-## 8. Version Freeze: WHOT-NG-v1.0
+## Quick Start
 
-With all Phase 0 specifications (P0-D1 to P0-D5) satisfied, the environment core is **frozen at `v0.1.0` (`WHOT-NG-v1.0`)**. Subsequent research (Paper 1 benchmark baselines, Paper 2 RL training, Paper 3 hidden-hand prediction, and Paper 4 opponent modelling) builds on this frozen baseline.
+### 1. Run the Test Suite
+Verify that all 109 unit tests and environment invariants pass:
+```bash
+pytest tests/
+```
+
+### 2. Run a Quick Experiment (Smoke Test)
+Execute a fast 5-game smoke test of the Paper 1 characterization benchmark:
+```bash
+python experiments/paper1/run_experiments.py --smoke-test
+```
+
+### 3. Basic Simulator Usage
+```python
+from whot_ml import WHOTEnvironment, WHOTConfig, RandomLegalAgent
+
+# Initialize environment with default 4-player configuration
+config = WHOTConfig(player_count=4, seed=42)
+env = WHOTEnvironment(config=config)
+obs = env.reset(seed=42)
+
+agents = [RandomLegalAgent(p) for p in range(4)]
+
+while not env.state.is_terminal:
+    current_player = env.state.current_player
+    legal_mask = env.get_legal_action_mask(current_player)
+    action = agents[current_player].select_action(obs[current_player], legal_mask)
+    step_result = env.step(action)
+    obs = step_result.observations
+
+print(f"Game completed in {env.state.turn_count} turns. Winner: Player {env.state.winner}")
+```
+
+---
+
+## Reproducibility & Scientific Integrity
+
+All experiments in WHOT-ML Paper 1 were executed under a strict frozen-baseline protocol:
+
+- **Frozen Commit:** `7c1a2dc23a277fdfb5e9052d4d90e3798fb24ea4`
+- **Environment:** `WHOT-NG-v1.0` (Simulator Version `1.0.0`)
+- **Production Workload:** $N = 12,350$ games executed in isolated Linux cloud containers.
+- **Audit Reports:** Complete independent scientific audits and claim verifications are available in [`docs/`](docs/).
+- **Open Data:** Raw trajectory telemetry and artifact archives are deposited on Zenodo.
+
+---
+
+## Citation
+
+If you use WHOT-ML in your research, please cite our work using the metadata in [`CITATION.cff`](CITATION.cff):
+
+```bibtex
+@article{osinka2026whotml,
+  title   = {WHOT-ML: A Configurable Partially Observable Multi-Agent Environment for Machine Learning Research},
+  author  = {Osinka, Brayan},
+  journal = {Preprint / Zenodo},
+  year    = {2026},
+  doi     = {10.5281/zenodo.REPLACE-WITH-DOI-AFTER-ZENODO-RELEASE},
+  url     = {https://github.com/Brayan114/Project-WHOT}
+}
+```
+
+---
+
+## License
+
+This project is licensed under the terms of the **MIT License**. See [`LICENSE`](LICENSE) for details.
+
+---
+
+## Contact & Contributing
+
+For questions, discussions, or bug reports, please open an issue on the [GitHub Issues](https://github.com/Brayan114/Project-WHOT/issues) tracker.

@@ -1,0 +1,23 @@
+{
+  "experiment_id": "EXP-01-CHAR",
+  "description": "Environment Characterization of baseline WHOT-NG-v1",
+  "ruleset_name": "WHOT-NG-v1",
+  "player_count": 4,
+  "starting_hand_size": 6,
+  "pilot_games_per_cohort": 50,
+  "full_games_per_cohort": 1000,
+  "pilot_seed_base": 10000,
+  "full_seed_base": 10000,
+  "cohorts": [
+    {
+      "name": "random_cohort",
+      "agent_type": "random",
+      "seed_offset": 0
+    },
+    {
+      "name": "rule_based_cohort",
+      "agent_type": "rule_based",
+      "seed_offset": 1000
+    }
+  ]
+}

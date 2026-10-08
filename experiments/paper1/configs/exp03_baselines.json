@@ -1,0 +1,43 @@
+{
+  "experiment_id": "EXP-03-BASELINES",
+  "description": "Baseline Agent Characterization (RandomLegalAgent vs RuleBasedAgent)",
+  "ruleset_name": "WHOT-NG-v1",
+  "pilot_seed_base": 30000,
+  "full_seed_base": 30000,
+  "matchups": [
+    {
+      "matchup_id": "RRRR",
+      "player_count": 4,
+      "agents": ["random", "random", "random", "random"],
+      "seat_rotation": false,
+      "pilot_games": 20,
+      "full_games": 1000
+    },
+    {
+      "matchup_id": "BBBB",
+      "player_count": 4,
+      "agents": ["rule_based", "rule_based", "rule_based", "rule_based"],
+      "seat_rotation": false,
+      "pilot_games": 20,
+      "full_games": 1000
+    },
+    {
+      "matchup_id": "BRRR",
+      "player_count": 4,
+      "agents": ["rule_based", "random", "random", "random"],
+      "seat_rotation": true,
+      "target_agent_type": "rule_based",
+      "pilot_games": 40,
+      "full_games": 2000
+    },
+    {
+      "matchup_id": "BR_2P",
+      "player_count": 2,
+      "agents": ["rule_based", "random"],
+      "seat_rotation": true,
+      "target_agent_type": "rule_based",
+      "pilot_games": 20,
+      "full_games": 1000
+    }
+  ]
+}

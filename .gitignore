@@ -1,14 +1,41 @@
-__pycache__/
+# Bytecode and runtime artifacts
+**/__pycache__/
 *.py[cod]
+*.pyc
 *$py.class
 *.so
+
+# Testing and coverage
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Environments
 .venv/
 venv/
 ENV/
+
+# Build artifacts
 build/
 dist/
 *.egg-info/
+
+# Large experimental production data and runs (archived off-repo on Zenodo)
+experiments/paper1/runs/
+experiments/paper1/raw/
+experiments/paper1/processed/
+
+# Pilot figures and tables (only full production artifacts are published)
+*_pilot.*
+experiments/paper1/figures/*_pilot.png
+experiments/paper1/tables/*_pilot.*
+
+# Operating system artifacts
 .DS_Store
+Thumbs.db
+
+# Kaggle staging directory (ephemeral dispatch artifacts)
+experiments/paper1/kaggle/staging/
+
+# Internal phase specification documents
+docs/WHOT-ML — P0-*.md
