@@ -3,7 +3,7 @@ message: "If you use this software, dataset, or environment, please cite it as b
 authors:
   - family-names: "Osinka"
     given-names: "Brayan"
-    orcid: "https://orcid.org/REPLACE-WITH-BRAYANS-ORCID"
+    orcid: "https://orcid.org/0009-0004-1914-1601"
     affiliation: "Independent Researcher"
 title: "WHOT-ML: A Configurable Partially Observable Multi-Agent Environment for Machine Learning Research"
 version: 1.0.0
