@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use this software, dataset, or environment, please cite it."
+message: "If you use this software, dataset, or environment, please cite it as below."
 authors:
   - family-names: "Osinka"
     given-names: "Brayan"
@@ -7,10 +7,12 @@ authors:
     affiliation: "Independent Researcher"
 title: "WHOT-ML: A Configurable Partially Observable Multi-Agent Environment for Machine Learning Research"
 version: 1.0.0
-doi: "10.5281/zenodo.REPLACE-WITH-DOI-AFTER-ZENODO-RELEASE"
-date-released: 2026-10-06
+doi: "10.5281/zenodo.REPLACE-WITH-CODE-DOI"
+date-released: 2026-10-08
 license: MIT
 url: "https://github.com/Brayan114/Project-WHOT"
+repository-code: "https://github.com/Brayan114/Project-WHOT"
+type: software
 keywords:
   - reinforcement learning
   - multi-agent systems
@@ -18,3 +20,4 @@ keywords:
   - POMDP
   - card games
   - benchmark environment
+  - whot
