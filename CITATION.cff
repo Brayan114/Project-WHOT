@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this software, dataset, or environment, please cite it as below."
 authors:
-  - family-names: "Osinka"
+  - family-names: "Osinaka"
     given-names: "Brayan"
     orcid: "https://orcid.org/0009-0004-1914-1601"
     affiliation: "Independent Researcher"
