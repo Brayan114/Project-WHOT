@@ -1,44 +1,22 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass[acmlarge, nonacm]{acmart}
 
-% --- Core Packages ---
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{lmodern}
-\usepackage{microtype}
-\usepackage{amsmath,amssymb,amsfonts}
+% --- Essential Packages ---
+\usepackage{amsmath,amsfonts}
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{graphicx}
 \usepackage{multirow}
-\usepackage{geometry}
-\geometry{margin=1in}
-\usepackage[numbers,sort&compress]{natbib}
 \usepackage{seqsplit}
-\usepackage{xcolor}
-\usepackage{hyperref}
-\hypersetup{
-    colorlinks=true,
-    linkcolor=blue!70!black,
-    citecolor=green!50!black,
-    urlcolor=blue!70!black
+
+\title{WHOT-ML: A Configurable Partially Observable Multi-Agent Environment for Machine Learning Research}
+
+\author{Brayan Osinaka}
+\orcid{0009-0004-1914-1601}
+\affiliation{%
+  \institution{Independent Researcher}
+  \country{Nigeria}
 }
-
-\title{\textbf{WHOT-ML: A Configurable Partially Observable Multi-Agent Environment for Machine Learning Research}}
-
-\author{
-    \textbf{Brayan Osinka} \\
-    Independent Researcher \\
-    \url{https://github.com/Brayan114/Project-WHOT}
-}
-
-\date{October 2026}
-
-\begin{document}
-
-\maketitle
-
-
-
+\email{brayanjunior101@gmail.com}
 
 \begin{abstract}
 
@@ -52,6 +30,12 @@ WHOT-ML establishes a rigorous, reproducible laboratory for subsequent research 
 
 
 \end{abstract}
+
+\keywords{reinforcement learning, multi-agent systems, partial observability, POMDP, card games, benchmark environment}
+
+\begin{document}
+
+\maketitle
 
 \section{Introduction}
 
@@ -329,6 +313,7 @@ Truncation Rate (95\% CI) & 7.6\% [6.1\%, 9.4\%] & 43.6\% [40.6\%, 46.7\%] & Max
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{figures/fig1_characterization_full.png}
+\Description{Empirical characterization of action space and game duration distributions for RandomLegal and RuleBased agents.}
 \caption{Environment Characterization under Baseline Agents (EXP-01). Subplot A: Empirical Cumulative Distribution Function (ECDF) of legal actions available $|\mathcal{A}(s_t)|$, showing RandomLegal concentrating at 1.0 (draw/singleton) while RuleBased exhibits a broad distribution extending past 20 options. Subplot B: Game duration distributions (median, IQR, and mean) across 1,000 games per cohort.}
 \label{fig:fig1_characterization}
 \end{figure}
@@ -418,6 +403,7 @@ Mean Log Combinatorial Uncertainty ($\log_{10} |\mathcal{S}(\Omega)|$) & 32.78 &
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\linewidth]{figures/fig2_partial_observability_full.png}
+\Description{Bar chart showing trajectory divergence rates across the three perturbation modes in Experiment 2.}
 \caption{Partial Observability Trajectory Divergence Rates (EXP-02). Rollout trajectory divergence rates across the three perturbation modes: Opponent Swap (84.7\%), Market Reversal (96.0\%), and Opponent-Market Swap (73.3\%), evaluating 449 observationally equivalent state pairs.}
 \label{fig:fig2_partial_observability}
 \end{figure}
@@ -486,6 +472,7 @@ BR\_2P & 1 Rule, 1 Rand & random & 13.7\% [11.7\%, 16.0\%] & 1.86 & 96.2 & 55.4 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\linewidth]{figures/fig3_baseline_winrates_full.png}
+\Description{Baseline agent win rates with 95\% confidence intervals across 4-player and 2-player tournament configurations.}
 \caption{Baseline Agent Win Rates with Wilson Score 95\% Confidence Intervals (EXP-03). RuleBased win rates in asymmetric 4-player BRRR (65.4\% [63.3\%, 67.5\%]) and 2-player BR\_2P (86.3\% [84.0\%, 88.3\%]), relative to the 25\% fair-share reference line.}
 \label{fig:fig3_baseline_winrates}
 \end{figure}
@@ -495,7 +482,7 @@ BR\_2P & 1 Rule, 1 Rand & random & 13.7\% [11.7\%, 16.0\%] & 1.86 & 96.2 & 55.4 
 
 \subsection{Key Insights and Seating Fairness}
 \begin{enumerate}
-  \item \textbf{Asymmetric Heuristic Dominance:} In 4-player asymmetric competition (\texttt{BRRR}), the single \texttt{RuleBasedAgent} wins \textbf{$65.4\%$ of games} ($>2.6\times$ fair-share 25\%) with an average finishing rank of $1.61$. In heads-up play (\texttt{BR\_2P}), heuristic dominance reaches \textbf{$86.3\%$}.
+  \item \textbf{Asymmetric Heuristic Dominance:} In 4-player asymmetric competition (\texttt{BRRR}), the single \mbox{\texttt{RuleBased-}} \texttt{Agent} wins \textbf{$65.4\%$ of games} ($>2.6\times$ fair-share 25\%) with an average finishing rank of $1.61$. In heads-up play (\texttt{BR\_2P}), heuristic dominance reaches \textbf{$86.3\%$}.
   \item \textbf{Superseding the Pilot's 100\% Heads-Up Artifact:} In pilot testing ($n=20$), RuleBased won $20/20$ ($100.0\%$). Full-scale production ($n=1,000$) reveals that \texttt{RandomLegalAgent} wins \textbf{$13.7\%$ of heads-up games} (Wilson 95\% CI $[11.7\%, 16.0\%]$). This occurs when random play is dealt high-tempo opening hands (e.g., chains of compatible low cards) that exhaust before the heuristic agent can establish control.
   \item \textbf{Rigorous Seating Balance:} Seating equity was audited across all tournament games:
 \end{enumerate}
@@ -561,6 +548,7 @@ $N$ & \textbf{Initial Market} $|M_0|$ & \textbf{Opponent Cards} $|C_{\text{opp}}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{figures/fig4_player_scaling_full.png}
+\Description{Plots illustrating player count scaling dynamics, mean turns, and market reshuffle behavior.}
 \caption{Player Count Scaling Dynamics across $N \in \{2..6\}$ (EXP-04). Total game duration and turns per player scaling across participant counts, highlighting the marked escalation and market exhaustion between $N=3$ and $N=4$ where $\rho_0$ approaches and exceeds unity.}
 \label{fig:fig4_player_scaling}
 \end{figure}
@@ -625,6 +613,7 @@ VAR-PENALTY-2 & Declaration penalty increased Draw 2 & 221.7 & -1.6 & 0.00 & 69.
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.85\linewidth]{figures/fig5_rule_variants_full.png}
+\Description{Violin and box plots of game durations under each of the five rule variants.}
 \caption{Rule Variant Game Duration Distributions (EXP-05). Paired game duration distributions across five rule variants over 2,500 games (500 seeds each), showing the distinct shortening effect of removing the last-card declaration rule (\texttt{VAR-NO-DECL}).}
 \label{fig:fig5_rule_variants}
 \end{figure}
@@ -781,7 +770,8 @@ By providing an open-source, mathematically grounded, and rigorously audited env
 
 
 
-\bibliographystyle{plainnat}
+
+\bibliographystyle{ACM-Reference-Format}
 \bibliography{references}
 
 \end{document}

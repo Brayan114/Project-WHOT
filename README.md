@@ -93,9 +93,9 @@ All experiments in WHOT-ML Paper 1 were executed under a strict frozen-baseline 
 If you use WHOT-ML in your research, please cite our work using the metadata in [`CITATION.cff`](CITATION.cff):
 
 ```bibtex
-@article{osinka2026whotml,
+@article{osinaka2026whotml,
   title   = {WHOT-ML: A Configurable Partially Observable Multi-Agent Environment for Machine Learning Research},
-  author  = {Osinka, Brayan},
+  author  = {Osinaka, Brayan},
   journal = {Preprint / Zenodo},
   year    = {2026},
   doi     = {10.5281/zenodo.REPLACE-WITH-DOI-AFTER-ZENODO-RELEASE},

@@ -3,7 +3,7 @@
 This directory contains the complete LaTeX source package for the preprint and publication of **WHOT-ML Paper 1**:
 
 > **Title:** WHOT-ML: A Configurable Partially Observable Multi-Agent Environment for Machine Learning Research  
-> **Author:** Brayan Osinka (Independent Researcher)  
+> **Author:** Brayan Osinaka (Independent Researcher)  
 > **Repository:** [https://github.com/Brayan114/Project-WHOT](https://github.com/Brayan114/Project-WHOT)  
 > **Simulator Baseline:** WHOT-NG-v1.0 (commit 7c1a2dc)  
 > **Production Dataset:** paper1_production_20261004_215724_7c1a2dc ( = 12,350$ runs)
@@ -12,18 +12,21 @@ This directory contains the complete LaTeX source package for the preprint and p
 
 ## Directory Structure
 
-`	ext
+```text
 paper/
-├── main.tex            # Full article LaTeX manuscript
-├── references.bib      # Complete BibTeX bibliography (16 references)
-├── README.md           # This compilation and usage guide
-└── figures/            # Full-resolution empirical publication figures
+├── main.tex                                # JAIR-formatted LaTeX manuscript (ACM acmart class)
+├── references.bib                          # Complete BibTeX bibliography (16 references)
+├── acmart.cls                              # ACM Primary Article Template class file
+├── ACM-Reference-Format.bst                # ACM BibTeX reference style file
+├── README.md                               # This compilation and usage guide
+├── WHOT-ML Paper 1 — Manuscript v1.0.pdf   # Compiled publication manuscript PDF
+└── figures/                                # Full-resolution empirical publication figures
     ├── fig1_characterization_full.png
     ├── fig2_partial_observability_full.png
     ├── fig3_baseline_winrates_full.png
     ├── fig4_player_scaling_full.png
     └── fig5_rule_variants_full.png
-`
+```
 
 ---
 
