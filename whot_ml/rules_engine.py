@@ -44,28 +44,38 @@ class RulesEngine:
         # 1. Active penalty in effect (P0-D4 Section 18, 19, 21)
         if active_penalty_count > 0 and active_penalty_type is not None:
             if active_penalty_type == SpecialEffect.PICK_TWO:
-                if not config.pick_two_enabled:
+                if not config.pick_two_enabled or config.pick_two_stacking == StackingMode.NO_STACKING:
                     return False
                 # Does WHOT defend?
                 if card.is_whot:
                     return config.whot_defends_penalty
-                # Normal Pick Two defense
-                if card.value == 2 and config.special_card_mapping.get(2) == SpecialEffect.PICK_TWO:
-                    return True
-                # Cross-stacking if configured
+                is_two = card.value == 2 and config.special_card_mapping.get(2) == SpecialEffect.PICK_TWO
+                if config.pick_two_stacking == StackingMode.SAME_EFFECT:
+                    return is_two
                 if config.pick_two_stacking == StackingMode.ANY_PICK_CARD:
-                    return card.value in (2, 5)
+                    is_five = (
+                        card.value == 5
+                        and config.pick_three_enabled
+                        and config.special_card_mapping.get(5) == SpecialEffect.PICK_THREE
+                    )
+                    return is_two or is_five
                 return False
 
             elif active_penalty_type == SpecialEffect.PICK_THREE:
-                if not config.pick_three_enabled:
+                if not config.pick_three_enabled or config.pick_three_stacking == StackingMode.NO_STACKING:
                     return False
                 if card.is_whot:
                     return config.whot_defends_penalty
-                if card.value == 5 and config.special_card_mapping.get(5) == SpecialEffect.PICK_THREE:
-                    return True
+                is_five = card.value == 5 and config.special_card_mapping.get(5) == SpecialEffect.PICK_THREE
+                if config.pick_three_stacking == StackingMode.SAME_EFFECT:
+                    return is_five
                 if config.pick_three_stacking == StackingMode.ANY_PICK_CARD:
-                    return card.value in (2, 5)
+                    is_two = (
+                        card.value == 2
+                        and config.pick_two_enabled
+                        and config.special_card_mapping.get(2) == SpecialEffect.PICK_TWO
+                    )
+                    return is_five or is_two
                 return False
 
             return False
