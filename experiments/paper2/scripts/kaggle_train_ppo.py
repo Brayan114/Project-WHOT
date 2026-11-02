@@ -11,10 +11,21 @@ import argparse
 import csv
 import os
 import random
+import subprocess
 import sys
 import time
 from typing import Any, Dict, Optional, Tuple
 import torch
+
+# Kaggle bootstrap: if executing in a Kaggle container, clone Project-WHOT from GitHub
+if os.path.exists("/kaggle/working"):
+    repo_dir = "/kaggle/working/Project-WHOT"
+    if not os.path.exists(repo_dir):
+        print("[KAGGLE BOOTSTRAP] Cloning Project-WHOT from GitHub...")
+        subprocess.run(["git", "clone", "https://github.com/Brayan114/Project-WHOT.git", repo_dir], check=True)
+    if repo_dir not in sys.path:
+        sys.path.insert(0, repo_dir)
+    os.chdir(repo_dir)
 
 # Ensure repository root is on sys.path
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
