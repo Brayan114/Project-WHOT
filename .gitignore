@@ -38,12 +38,16 @@ Thumbs.db
 experiments/paper1/kaggle/staging/
 
 # Internal phase specification documents
-docs/WHOT-ML — P0-*.md
+docs/WHOT-ML – P0-*.md
 
-# Paper 2 training artifacts
-experiments/paper2/runs/
+# Paper and submission artifacts
+paper/
+*.zip
+*.pdf
+
+# Model weights and training runs
 *.pt
+experiments/paper2/runs/
 
 # Local standalone compiler tools
 tools/tectonic/
-
