@@ -6,8 +6,8 @@ authors:
     orcid: "https://orcid.org/0009-0004-1914-1601"
     affiliation: "Independent Researcher"
 title: "WHOT-ML: A Configurable Partially Observable Multi-Agent Environment for Machine Learning Research"
-version: 1.0.0
-doi: "10.5281/zenodo.23269645"
+version: 1.0.2
+doi: "10.5281/zenodo.23918026"
 date-released: 2026-10-08
 license: MIT
 url: "https://github.com/Brayan114/Project-WHOT"

@@ -98,7 +98,7 @@ If you use WHOT-ML in your research, please cite our work using the metadata in 
   author  = {Osinaka, Brayan},
   journal = {Preprint / Zenodo},
   year    = {2026},
-  doi     = {10.5281/zenodo.REPLACE-WITH-DOI-AFTER-ZENODO-RELEASE},
+  doi     = {10.5281/zenodo.23918026},
   url     = {https://github.com/Brayan114/Project-WHOT}
 }
 ```
