@@ -16,7 +16,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from experiments.paper1.scripts.common import ExperimentPaths
+from experiments.paper1.scripts.common import ExperimentPaths, StatisticalUtilities
 
 
 def generate_table1_characterization(pilot: bool = True, suffix: Optional[str] = None) -> Tuple[Path, Path]:
@@ -124,7 +124,7 @@ def generate_table2_partial_observability(pilot: bool = True, suffix: Optional[s
 
 
 def generate_table3_baselines(pilot: bool = True, suffix: Optional[str] = None) -> Tuple[Path, Path]:
-    """Table 3: Baseline Agent Tournament Summary."""
+    """Table 3: Baseline Agent Tournament Summary with unpooled game-level CIs."""
     if suffix is None:
         suffix = "pilot" if pilot else "full"
     with open(ExperimentPaths.PROCESSED / f"exp03_{suffix}_summary.json", "r", encoding="utf-8") as f:
@@ -137,13 +137,51 @@ def generate_table3_baselines(pilot: bool = True, suffix: Optional[str] = None) 
         "| :--- | :--- | :--- | :--- | :--- | :--- | :--- |",
     ]
 
+    # Precompute unpooled game-level win rate statistics
+    table_rows = []
     for m_id, m_data in data["matchups"].items():
-        wr_stats = m_data["win_rate_stats"]
-        for atype, stat in wr_stats.items():
+        num_games = m_data["games_played"]
+        if m_id in ("RRRR", "BBBB"):
+            atype = "random" if m_id == "RRRR" else "rule_based"
+            point_est = m_data["win_rate_stats"][atype]["point"]
+            # Game-level denominator N (e.g. 1000) avoids pooling correlated seats within the same game
+            k = round(point_est * num_games)
+            ci = StatisticalUtilities.wilson_score_interval(k, num_games)
+            stat = {
+                "point": point_est,
+                "ci_lower": ci["ci_lower"],
+                "ci_upper": ci["ci_upper"],
+            }
             rank_mean = m_data["rank_stats"].get(atype, {}).get("mean", 0.0)
-            md_lines.append(
-                f"| {m_id} | {atype} | {stat['point']:.1%} [{stat['ci_lower']:.1%}, {stat['ci_upper']:.1%}] | {rank_mean:.2f} | {m_data['turn_length']['mean']:.1f} | {m_data['draw_count']['mean']:.1f} | {m_data['truncation']['point']:.1%} |"
-            )
+            table_rows.append((m_id, atype, stat, rank_mean, m_data))
+        elif m_id == "BRRR":
+            # 1 RuleBased agent (single seat, N=2000)
+            rb_wins = m_data["wins_by_agent_type"]["rule_based"]
+            ci_rb = StatisticalUtilities.wilson_score_interval(rb_wins, num_games)
+            rank_rb = m_data["rank_stats"].get("rule_based", {}).get("mean", 0.0)
+            table_rows.append((m_id, "rule_based", ci_rb, rank_rb, m_data))
+
+            # Random cohort (all random players combined, N=2000)
+            rand_wins = m_data["wins_by_agent_type"]["random"]
+            ci_rand = StatisticalUtilities.wilson_score_interval(rand_wins, num_games)
+            rank_rand = m_data["rank_stats"].get("random", {}).get("mean", 0.0)
+            table_rows.append((m_id, "random (cohort)", ci_rand, rank_rand, m_data))
+        elif m_id == "BR_2P":
+            # 2-player heads-up (single seat each, N=1000)
+            rb_wins = m_data["wins_by_agent_type"]["rule_based"]
+            ci_rb = StatisticalUtilities.wilson_score_interval(rb_wins, num_games)
+            rank_rb = m_data["rank_stats"].get("rule_based", {}).get("mean", 0.0)
+            table_rows.append((m_id, "rule_based", ci_rb, rank_rb, m_data))
+
+            rand_wins = m_data["wins_by_agent_type"]["random"]
+            ci_rand = StatisticalUtilities.wilson_score_interval(rand_wins, num_games)
+            rank_rand = m_data["rank_stats"].get("random", {}).get("mean", 0.0)
+            table_rows.append((m_id, "random", ci_rand, rank_rand, m_data))
+
+    for m_id, atype, stat, rank_mean, m_data in table_rows:
+        md_lines.append(
+            f"| {m_id} | {atype} | {stat['point']:.1%} [{stat['ci_lower']:.1%}, {stat['ci_upper']:.1%}] | {rank_mean:.2f} | {m_data['turn_length']['mean']:.1f} | {m_data['draw_count']['mean']:.1f} | {m_data['truncation']['point']:.1%} |"
+        )
 
     md_path = ExperimentPaths.TABLES / f"table3_baselines_{suffix}.md"
     with open(md_path, "w", encoding="utf-8") as f:
@@ -159,12 +197,11 @@ def generate_table3_baselines(pilot: bool = True, suffix: Optional[str] = None) 
         "Matchup & Agent & Win Rate (95\\% CI) & Rank & Turns & Draws & Trunc \\\\",
         "\\hline",
     ]
-    for m_id, m_data in data["matchups"].items():
-        for atype, stat in m_data["win_rate_stats"].items():
-            rank_mean = m_data["rank_stats"].get(atype, {}).get("mean", 0.0)
-            tex_lines.append(
-                f"{m_id} & {atype} & {stat['point'] * 100:.1f}\\% [{stat['ci_lower'] * 100:.1f}\\%, {stat['ci_upper'] * 100:.1f}\\%] & {rank_mean:.2f} & {m_data['turn_length']['mean']:.1f} & {m_data['draw_count']['mean']:.1f} & {m_data['truncation']['point'] * 100:.1f}\\% \\\\"
-            )
+    for m_id, atype, stat, rank_mean, m_data in table_rows:
+        atype_tex = atype.replace("_", "\\_")
+        tex_lines.append(
+            f"{m_id} & {atype_tex} & {stat['point'] * 100:.1f}\\% [{stat['ci_lower'] * 100:.1f}\\%, {stat['ci_upper'] * 100:.1f}\\%] & {rank_mean:.2f} & {m_data['turn_length']['mean']:.1f} & {m_data['draw_count']['mean']:.1f} & {m_data['truncation']['point'] * 100:.1f}\\% \\\\"
+        )
     tex_lines.extend(["\\hline", "\\end{tabular}", "\\end{table}"])
     with open(tex_path, "w", encoding="utf-8") as f:
         f.write("\n".join(tex_lines) + "\n")
@@ -172,42 +209,53 @@ def generate_table3_baselines(pilot: bool = True, suffix: Optional[str] = None) 
     return md_path, tex_path
 
 
-def generate_table4_scaling(pilot: bool = True, suffix: Optional[str] = None) -> Tuple[Path, Path]:
+def generate_table4_scaling(
+    pilot: bool = True, suffix: Optional[str] = None, tag: str = "exp04"
+) -> Tuple[Path, Path]:
     """Table 4: Player Count Scaling Summary."""
     if suffix is None:
         suffix = "pilot" if pilot else "full"
-    with open(ExperimentPaths.PROCESSED / f"exp04_{suffix}_summary.json", "r", encoding="utf-8") as f:
+    json_path = ExperimentPaths.PROCESSED / f"{tag}_{suffix}_summary.json"
+    if not json_path.exists():
+        json_path = ExperimentPaths.PROCESSED / f"exp04_{suffix}_summary.json"
+    with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
+    agent_type = data.get("agent_type", "rule_based")
+    agent_label = "RandomLegal" if agent_type == "random" else "RuleBased"
     status_str = suffix.upper()
+    file_prefix = f"table4{tag[5:]}_scaling_{suffix}" if len(tag) > 5 else f"table4_scaling_{suffix}"
+
     md_lines = [
-        f"# Table 4: Player Count Scaling Dynamics $N \\in \\{{2..6\\}}$ [{status_str}]\n",
-        "| $N$ | Initial Market $|M_0|$ | Opponent Cards $|C_{opp}|$ | Opp/Market Ratio $\\rho_0$ | Mean Turns | Turns/Player | Draws/Game | Reshuffles |",
-        "| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |",
+        f"# Table 4: Player Count Scaling Dynamics ({agent_label}) $N \\in \\{{2..6\\}}$ [{status_str}]\n",
+        "| $N$ | Initial Market $|M_0|$ | Opponent Cards $|C_{opp}|$ | Opp/Market Ratio $\\rho_0$ | Mean Turns | Turns/Player | Draws/Game | Reshuffles | Truncation % |",
+        "| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |",
     ]
 
     for n_str, res in sorted(data["scaling_results"].items(), key=lambda x: int(x[0])):
+        trunc_str = f"{res['truncation']['point']:.1%}" if "truncation" in res else "-"
         md_lines.append(
-            f"| {res['player_count']} | {res['initial_market_size']} | {res['initial_opponent_cards']} | {res['initial_opp_to_market_ratio']:.3f} | {res['turn_count']['mean']:.1f} | {res['turns_per_player']['mean']:.1f} | {res['draw_count']['mean']:.1f} | {res['market_reshuffles']['mean']:.2f} |"
+            f"| {res['player_count']} | {res['initial_market_size']} | {res['initial_opponent_cards']} | {res['initial_opp_to_market_ratio']:.3f} | {res['turn_count']['mean']:.1f} | {res['turns_per_player']['mean']:.1f} | {res['draw_count']['mean']:.1f} | {res['market_reshuffles']['mean']:.2f} | {trunc_str} |"
         )
 
-    md_path = ExperimentPaths.TABLES / f"table4_scaling_{suffix}.md"
+    md_path = ExperimentPaths.TABLES / f"{file_prefix}.md"
     with open(md_path, "w", encoding="utf-8") as f:
         f.write("\n".join(md_lines) + "\n")
 
-    tex_path = ExperimentPaths.TABLES / f"table4_scaling_{suffix}.tex"
+    tex_path = ExperimentPaths.TABLES / f"{file_prefix}.tex"
     tex_lines = [
         "\\begin{table}[ht]",
         "\\centering",
-        f"\\caption{{Player Count Scaling Summary $N \\in \\{{2..6\\}}$ [{status_str}]}}",
-        "\\begin{tabular}{cccccccc}",
+        f"\\caption{{Player Count Scaling Summary ({agent_label}) $N \\in \\{{2..6\\}}$ [{status_str}]}}",
+        "\\begin{tabular}{ccccccccc}",
         "\\hline",
-        "$N$ & $|M_0|$ & $|C_{opp}|$ & $\\rho_0$ & Turns & Turns/Player & Draws & Reshuffles \\\\",
+        "$N$ & $|M_0|$ & $|C_{opp}|$ & $\\rho_0$ & Turns & Turns/Player & Draws & Reshuffles & Trunc \\\\",
         "\\hline",
     ]
     for n_str, res in sorted(data["scaling_results"].items(), key=lambda x: int(x[0])):
+        trunc_val = f"{res['truncation']['point'] * 100:.1f}\\%" if "truncation" in res else "-"
         tex_lines.append(
-            f"{res['player_count']} & {res['initial_market_size']} & {res['initial_opponent_cards']} & {res['initial_opp_to_market_ratio']:.3f} & {res['turn_count']['mean']:.1f} & {res['turns_per_player']['mean']:.1f} & {res['draw_count']['mean']:.1f} & {res['market_reshuffles']['mean']:.2f} \\\\"
+            f"{res['player_count']} & {res['initial_market_size']} & {res['initial_opponent_cards']} & {res['initial_opp_to_market_ratio']:.3f} & {res['turn_count']['mean']:.1f} & {res['turns_per_player']['mean']:.1f} & {res['draw_count']['mean']:.1f} & {res['market_reshuffles']['mean']:.2f} & {trunc_val} \\\\"
         )
     tex_lines.extend(["\\hline", "\\end{tabular}", "\\end{table}"])
     with open(tex_path, "w", encoding="utf-8") as f:
@@ -346,6 +394,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate Paper 1 Tables")
     parser.add_argument("--full", action="store_true", help="Generate from full data instead of pilot")
     parser.add_argument("--dry-run", action="store_true", help="Generate from dry-run data")
+    parser.add_argument("--run-dir", type=str, default=None, help="Custom run directory path")
     args = parser.parse_args()
+    if args.run_dir:
+        ExperimentPaths.set_run_directory(Path(args.run_dir))
     suffix_arg = "dry_run" if args.dry_run else ("full" if args.full else "pilot")
     generate_all_tables(pilot=not args.full, suffix=suffix_arg)

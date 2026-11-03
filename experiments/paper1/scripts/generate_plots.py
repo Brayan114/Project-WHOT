@@ -95,8 +95,7 @@ def plot_fig1_characterization(pilot: bool = True, suffix: Optional[str] = None)
     ax2.set_title("B: Game Duration by Agent Baseline")
     ax2.legend(loc="upper right")
 
-    status_str = "PILOT" if pilot else "FULL"
-    fig.suptitle(f"WHOT-NG-v1 Environment Characterization [{status_str}]", y=1.02)
+    fig.suptitle("WHOT-NG-v1 Environment Characterization", y=1.02)
     plt.tight_layout()
 
     out_path = ExperimentPaths.FIGURES / f"fig1_characterization_{suffix}.png"
@@ -138,8 +137,7 @@ def plot_fig2_partial_observability(pilot: bool = True, suffix: Optional[str] = 
 
     ax.set_ylabel("Trajectory Divergence Rate (%)")
     ax.set_ylim(0, 110)
-    status_str = suffix.upper()
-    ax.set_title(f"Trajectory Divergence Rate from Equivalent States [{status_str}]")
+    ax.set_title("Trajectory Divergence Rate from Equivalent States")
     plt.tight_layout()
 
     out_path = ExperimentPaths.FIGURES / f"fig2_partial_observability_{suffix}.png"
@@ -201,8 +199,7 @@ def plot_fig3_baseline_winrates(pilot: bool = True, suffix: Optional[str] = None
     ax.set_xticklabels(labels)
     ax.set_ylabel("Win Rate")
     ax.set_ylim(0, 1.05)
-    status_str = "PILOT" if pilot else "FULL"
-    ax.set_title(f"RuleBasedAgent Win Rates in Asymmetric Matchups [{status_str}]")
+    ax.set_title("RuleBasedAgent Win Rates in Asymmetric Matchups")
     ax.legend(loc="upper right")
     plt.tight_layout()
 
@@ -216,28 +213,46 @@ def plot_fig4_player_scaling(pilot: bool = True, suffix: Optional[str] = None) -
     """Figure 4: Player Count Scaling (Game length vs N)."""
     if suffix is None:
         suffix = "pilot" if pilot else "full"
-    json_path = ExperimentPaths.PROCESSED / f"exp04_{suffix}_summary.json"
-    if not json_path.exists():
-        raise FileNotFoundError(f"Missing processed data: {json_path}")
 
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    p4a = ExperimentPaths.PROCESSED / f"exp04a_{suffix}_summary.json"
+    p4b = ExperimentPaths.PROCESSED / f"exp04b_{suffix}_summary.json"
+    p4 = ExperimentPaths.PROCESSED / f"exp04_{suffix}_summary.json"
 
-    scaling = data["scaling_results"]
-    fig, ax = plt.subplots(figsize=(7.0, 4.2))
+    fig, ax = plt.subplots(figsize=(7.5, 4.5))
 
-    ns = sorted(int(k) for k in scaling.keys())
-    total_turns = [scaling[str(n)]["turn_count"]["mean"] for n in ns]
-    turns_per_player = [scaling[str(n)]["turns_per_player"]["mean"] for n in ns]
+    if p4a.exists() and p4b.exists():
+        with open(p4a, "r", encoding="utf-8") as f:
+            data_a = json.load(f)
+        with open(p4b, "r", encoding="utf-8") as f:
+            data_b = json.load(f)
 
-    ax.plot(ns, total_turns, marker="o", linewidth=2, color="#1f77b4", label="Total Game Turns")
-    ax.plot(ns, turns_per_player, marker="s", linewidth=2, linestyle="--", color="#2ca02c", label="Turns per Player")
+        ns = sorted(int(k) for k in data_a["scaling_results"].keys())
+        turns_a = [data_a["scaling_results"][str(n)]["turn_count"]["mean"] for n in ns]
+        turns_b = [data_b["scaling_results"][str(n)]["turn_count"]["mean"] for n in ns]
+
+        ax.plot(ns, turns_a, marker="o", linewidth=2.2, color="#1f77b4", label="RandomLegal (Total Turns)")
+        ax.plot(ns, turns_b, marker="s", linewidth=2.2, color="#d62728", label="RuleBased (Total Turns)")
+
+        turns_pp_a = [data_a["scaling_results"][str(n)]["turns_per_player"]["mean"] for n in ns]
+        turns_pp_b = [data_b["scaling_results"][str(n)]["turns_per_player"]["mean"] for n in ns]
+        ax.plot(ns, turns_pp_a, marker="^", linewidth=1.5, linestyle="--", color="#aec7e8", label="RandomLegal (Turns / Player)")
+        ax.plot(ns, turns_pp_b, marker="v", linewidth=1.5, linestyle="--", color="#ff9896", label="RuleBased (Turns / Player)")
+    elif p4.exists():
+        with open(p4, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        scaling = data["scaling_results"]
+        ns = sorted(int(k) for k in scaling.keys())
+        total_turns = [scaling[str(n)]["turn_count"]["mean"] for n in ns]
+        turns_per_player = [scaling[str(n)]["turns_per_player"]["mean"] for n in ns]
+        ax.plot(ns, total_turns, marker="o", linewidth=2, color="#1f77b4", label="Total Game Turns")
+        ax.plot(ns, turns_per_player, marker="s", linewidth=2, linestyle="--", color="#2ca02c", label="Turns per Player")
+    else:
+        raise FileNotFoundError(f"Missing processed data for EXP-04 in {ExperimentPaths.PROCESSED}")
 
     ax.set_xlabel("Number of Players ($N$)")
     ax.set_ylabel("Mean Turns to Completion")
     ax.set_xticks(ns)
-    status_str = suffix.upper()
-    ax.set_title(f"Game Duration Scaling across Player Counts $N \\in \\{{2..6\\}}$ [{status_str}]")
+    ax.set_title("Game Duration Scaling across Player Counts $N \\in \\{2..6\\}$")
     ax.legend(loc="upper left")
     plt.tight_layout()
 
@@ -279,8 +294,7 @@ def plot_fig5_rule_variants(pilot: bool = True, suffix: Optional[str] = None) ->
         )
 
     ax.set_ylabel("Mean Turns to Completion")
-    status_str = suffix.upper()
-    ax.set_title(f"Game Duration Comparison across Controlled Rule Variants [{status_str}]")
+    ax.set_title("Game Duration Comparison across Controlled Rule Variants")
     plt.tight_layout()
 
     out_path = ExperimentPaths.FIGURES / f"fig5_rule_variants_{suffix}.png"
@@ -323,6 +337,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate Paper 1 Plots")
     parser.add_argument("--full", action="store_true", help="Generate from full data instead of pilot")
     parser.add_argument("--dry-run", action="store_true", help="Generate from dry-run data")
+    parser.add_argument("--run-dir", type=str, default=None, help="Custom run directory path")
     args = parser.parse_args()
+    if args.run_dir:
+        ExperimentPaths.set_run_directory(Path(args.run_dir))
     suffix_arg = "dry_run" if args.dry_run else ("full" if args.full else "pilot")
     generate_all_plots(pilot=not args.full, suffix=suffix_arg)

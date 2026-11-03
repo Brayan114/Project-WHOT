@@ -39,3 +39,7 @@ experiments/paper1/kaggle/staging/
 
 # Internal phase specification documents
 docs/WHOT-ML — P0-*.md
+
+# Paper 2 training artifacts
+experiments/paper2/runs/
+*.pt

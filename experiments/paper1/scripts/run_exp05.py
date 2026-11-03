@@ -11,9 +11,10 @@ Evaluates derived rule variants against baseline WHOT-NG-v1 using matched seeds:
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import sys
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Tuple
 
 # Add project root to sys.path
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
@@ -57,7 +58,40 @@ def build_variant_config(overrides: Dict[str, Any], player_count: int = 4) -> WH
     return WHOTConfig(**kwargs)
 
 
-def run_exp05(pilot: bool = True, dry_run: bool = False) -> Dict[str, Any]:
+def _run_exp05_game(args: Tuple[str, str, Dict[str, Any], int, List[str], bool, bool, int, int]) -> GameTrajectoryRecord:
+    """Worker task executing a single game in EXP-05."""
+    exp_id, var_id, overrides, player_count, agent_pop, pilot, dry_run, seed, g = args
+    cfg = build_variant_config(overrides, player_count=player_count)
+    cfg_hash = compute_config_hash(cfg)
+    manifest = RunManifest(
+        experiment_id=f"{exp_id}-{var_id}",
+        is_pilot=pilot if not dry_run else False,
+        is_dry_run=dry_run,
+        seed=seed,
+        player_count=player_count,
+        variant_id=var_id,
+        ruleset_hash=cfg_hash,
+        config_hash=cfg_hash,
+        agent_population=agent_pop,
+    )
+
+    env = GameEnvironment(config=cfg)
+    agents = BalancedSeatAssigner.assign_seats(
+        agent_types=agent_pop,
+        game_index=g,
+        base_seed=seed,
+        rotate=False,  # Fixed seating across matched seeds to isolate rule factor
+    )
+
+    return TrajectoryCollector.play_instrumented_game(
+        env=env,
+        agents=agents,
+        manifest=manifest,
+        record_steps=False,
+    )
+
+
+def run_exp05(pilot: bool = True, dry_run: bool = False, workers: int = 1) -> Dict[str, Any]:
     """Execute EXP-05 Controlled Rule Variants with matched seeds."""
     config_data = load_experiment_config("exp05_rule_variants.json")
     exp_id = config_data["experiment_id"]
@@ -78,7 +112,7 @@ def run_exp05(pilot: bool = True, dry_run: bool = False) -> Dict[str, Any]:
 
     mode_label = "DRY-RUN" if dry_run else ("PILOT" if pilot else "FULL")
     print(f"\n[EXP-05] Starting Controlled Rule Variants ({mode_label})")
-    print(f"  Games per variant: {games_per_variant} (Matched seeds {seed_base}..{seed_base + games_per_variant - 1})")
+    print(f"  Games per variant: {games_per_variant} (Matched seeds {seed_base}..{seed_base + games_per_variant - 1}) | Workers: {workers}")
 
     all_records: List[GameTrajectoryRecord] = []
     variant_results: Dict[str, Any] = {}
@@ -99,36 +133,19 @@ def run_exp05(pilot: bool = True, dry_run: bool = False) -> Dict[str, Any]:
         rule_based_wins = 0
         truncations = 0
 
-        for g in range(games_per_variant):
-            seed = seed_base + g
-            manifest = RunManifest(
-                experiment_id=f"{exp_id}-{var_id}",
-                is_pilot=pilot if not dry_run else False,
-                is_dry_run=dry_run,
-                seed=seed,
-                player_count=player_count,
-                variant_id=var_id,
-                ruleset_hash=cfg_hash,
-                config_hash=cfg_hash,
-                agent_population=agent_pop,
-            )
+        task_args = [
+            (exp_id, var_id, overrides, player_count, agent_pop, pilot, dry_run, seed_base + g, g)
+            for g in range(games_per_variant)
+        ]
 
-            env = GameEnvironment(config=cfg)
-            agents = BalancedSeatAssigner.assign_seats(
-                agent_types=agent_pop,
-                game_index=g,
-                base_seed=seed,
-                rotate=False,  # Fixed seating across matched seeds to isolate rule factor
-            )
+        if workers > 1:
+            with concurrent.futures.ProcessPoolExecutor(max_workers=workers) as executor:
+                recs = list(executor.map(_run_exp05_game, task_args))
+        else:
+            recs = [_run_exp05_game(a) for a in task_args]
 
-            rec = TrajectoryCollector.play_instrumented_game(
-                env=env,
-                agents=agents,
-                manifest=manifest,
-                record_steps=False,
-            )
+        for rec in recs:
             all_records.append(rec)
-
             turn_counts.append(rec.turn_count)
             draw_counts.append(rec.draw_count)
             if rec.winner == 0:  # Seat 0 is rule_based
@@ -159,15 +176,18 @@ def run_exp05(pilot: bool = True, dry_run: bool = False) -> Dict[str, Any]:
     base_draws = variant_raw_draws.get("VAR-BASE", [])
     paired_comparisons: Dict[str, Any] = {}
 
-    for var_id, turns in variant_raw_turns.items():
+    for var_id in variant_results.keys():
         if var_id == "VAR-BASE":
             continue
-        draws = variant_raw_draws[var_id]
+
+        var_turns = variant_raw_turns[var_id]
+        var_draws = variant_raw_draws[var_id]
+
         paired_comparisons[var_id] = {
-            "turn_diff_stats": StatisticalUtilities.paired_differences(base_turns, turns),
-            "draw_diff_stats": StatisticalUtilities.paired_differences(base_draws, draws),
-            "turn_cliffs_delta": StatisticalUtilities.cliffs_delta(turns, base_turns),
-            "draw_cliffs_delta": StatisticalUtilities.cliffs_delta(draws, base_draws),
+            "turn_diff_stats": StatisticalUtilities.paired_differences(base_turns, var_turns),
+            "turn_cliffs_delta": StatisticalUtilities.cliffs_delta(var_turns, base_turns),
+            "draw_diff_stats": StatisticalUtilities.paired_differences(base_draws, var_draws),
+            "draw_cliffs_delta": StatisticalUtilities.cliffs_delta(var_draws, base_draws),
         }
 
     raw_path = save_raw_telemetry(f"exp05_{suffix}_raw.jsonl", all_records)
@@ -176,6 +196,7 @@ def run_exp05(pilot: bool = True, dry_run: bool = False) -> Dict[str, Any]:
         "experiment_id": exp_id,
         "is_pilot": pilot if not dry_run else False,
         "is_dry_run": dry_run,
+        "baseline_environment": config_data.get("baseline_environment", "WHOT-NG-v1"),
         "variants": variant_results,
         "paired_comparisons_vs_base": paired_comparisons,
     }
@@ -196,5 +217,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--dry-run", action="store_true", help="Run small dry-run test"
     )
+    parser.add_argument(
+        "--workers", type=int, default=1, help="Number of parallel worker processes"
+    )
     args = parser.parse_args()
-    run_exp05(pilot=not args.full, dry_run=args.dry_run)
+    run_exp05(pilot=not args.full, dry_run=args.dry_run, workers=args.workers)
