@@ -43,3 +43,7 @@ docs/WHOT-ML — P0-*.md
 # Paper 2 training artifacts
 experiments/paper2/runs/
 *.pt
+
+# Local standalone compiler tools
+tools/tectonic/
+
