@@ -44,6 +44,8 @@ docs/WHOT-ML – P0-*.md
 paper/
 *.zip
 *.pdf
+*Manuscript*.md
+
 
 # Model weights and training runs
 *.pt
