@@ -271,7 +271,7 @@ We evaluate two standardized reference policies:
 \end{enumerate}
 
 \subsection{Production Execution Infrastructure}
-To guarantee independence from the local development workstation, the full production suite of \textbf{$N = 14,350$ runs} (comprising $12,350$ core environment and baseline games, $2,000$ PPO evaluation games across 10M training steps, and $10,000$ latent state probes) was packaged, dispatched via API, and executed within containerized \textbf{Kaggle Cloud CPU and GPU} instances running Linux (\texttt{kernel 6.6.137+}, Python \texttt{3.13.15}, pytest \texttt{8.4.2}). Execution ran for $2,199.69$ seconds (~$36.66$ minutes wall-clock compute for CPU baselines; ~5 hours GPU compute for 10M-step PPO training). Artifacts were packaged, cryptographically hashed (SHA-256: {\small\texttt{\seqsplit{8a82d9f7529610b1beb408395f1bc6b9edd9c8d784dee9887c38e02599d4a13a}}}), and retrieved for independent scientific auditing.
+To guarantee independence from the local development workstation, the full production suite of \textbf{$N = 14,350$ runs} (comprising $12,350$ core environment and baseline games, $2,000$ PPO evaluation games across 10M training steps, and $10,000$ latent state probes) was packaged, dispatched via API, and executed within containerized \textbf{Kaggle Cloud CPU and GPU} instances running Linux (\texttt{kernel 6.6.137+}, Python \texttt{3.13.15}, pytest \texttt{8.4.2}). Execution ran for $2,199.69$ seconds (~$36.66$ minutes wall-clock compute for CPU baselines; ~6.87 hours GPU compute for 10M-step PPO training). Artifacts were packaged, cryptographically hashed (SHA-256: {\small\texttt{\seqsplit{8a82d9f7529610b1beb408395f1bc6b9edd9c8d784dee9887c38e02599d4a13a}}}), and retrieved for independent scientific auditing.
 
 \subsection{Statistical Estimation and Inference}
 \begin{itemize}
@@ -741,7 +741,7 @@ EXP-04 & 2,500 & Gameplay dynamics undergo regime shift & Reshuffles: 0.41 $\to$
 EXP-05 & 2,500 & Declarations add strategic friction; penalty & NoDecl: $\Delta = -49.9$ turns; & Paired matched seeds, & Established \\
        &       & stacking drives defensive stalls and recycling. & NoStack: Trunc $2.2\% \to 0.8\%$ & Cliff's $\delta = -0.13, +0.04$ & \\
 \addlinespace
-EXP-06 & 200   & Verified suite certifies determinism, & Replays: 100/100; Checkpoints: & 114 unit tests passed, & Established \\
+Sec. 5.1 & 200 & Verified suite certifies determinism, & Replays: 100/100; Checkpoints: & 114 unit tests passed, & Established \\
        &       & information boundaries, and state restoration. & 100/100; RSR = 100.0\% & bitwise SHA-256 parity & \\
 \addlinespace
 EXP-06 & 2,000 + 10k & Masked PPO resolves heuristic defensive stall; & PPO Win: 21.2\%; Self-Play Trunc: & Wilson 95\% CIs, & Established \\
@@ -873,7 +873,7 @@ This appendix provides the completed JAIR Reproducibility Checklist accompanying
   \item \textbf{The source code comes with a license that allows free usage for research purposes in general.} \hfill \textbf{[yes]} \\
   \textit{Permissive MIT License permits unrestricted academic and research usage.}
   \item \textbf{Raw, unaggregated data from all experiments is included in an online appendix or will be made publicly available upon publication of the paper.} \hfill \textbf{[yes]} \\
-  \textit{All raw trajectory telemetry (.jsonl) across 12,350 games is archived and openly accessible.}
+  \textit{All raw trajectory telemetry (.jsonl) across 14,350 games is archived and openly accessible.}
   \item \textbf{The unaggregated data comes with a license that allows free usage for reproducibility purposes.} \hfill \textbf{[yes]} \\
   \textit{Archived under Creative Commons Attribution 4.0 International (CC-BY 4.0).}
   \item \textbf{The unaggregated data comes with a license that allows free usage for research purposes in general.} \hfill \textbf{[yes]} \\
