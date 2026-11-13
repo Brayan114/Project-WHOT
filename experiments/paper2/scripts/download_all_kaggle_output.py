@@ -7,7 +7,7 @@ kaggle.api.authenticate()
 mod = sys.modules['kaggle.api.kaggle_api_extended']
 
 target_dir = os.path.abspath("experiments/paper2/runs/kaggle_production_10m")
-owner_slug = "brayanosinaka"
+owner_slug = os.environ.get("KAGGLE_USERNAME", "whot-ml")
 kernel_slug = "whot-ml-paper-2-ppo-training"
 
 # Resume from the page token reported by the previous download

@@ -22,7 +22,8 @@ if os.path.exists("/kaggle/working"):
     repo_dir = "/kaggle/working/Project-WHOT"
     if not os.path.exists(repo_dir):
         print("[KAGGLE BOOTSTRAP] Cloning Project-WHOT from GitHub...")
-        subprocess.run(["git", "clone", "https://github.com/Brayan114/Project-WHOT.git", repo_dir], check=True)
+        repo_url = os.environ.get("WHOT_REPO_URL", "https://github.com/WHOT-ML/Project-WHOT.git")
+        subprocess.run(["git", "clone", repo_url, repo_dir], check=True)
     if repo_dir not in sys.path:
         sys.path.insert(0, repo_dir)
     os.chdir(repo_dir)

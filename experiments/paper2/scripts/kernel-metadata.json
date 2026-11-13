@@ -1,5 +1,5 @@
 {
-  "id": "brayanosinaka/whot-ml-paper-2-ppo-training",
+  "id": "whot-ml/whot-ml-paper-2-ppo-training",
   "title": "WHOT-ML Paper 2 PPO Training",
   "code_file": "kaggle_train_ppo.py",
   "language": "python",

@@ -58,7 +58,7 @@ def run_preflight_checks() -> None:
         raise RuntimeError("whot_ml/ has local modifications! Aborting dispatch.")
 
     # 3. Verify GitHub remote has frozen commit
-    print(f"  [3/5] Verified GitHub Source: https://github.com/Brayan114/Project-WHOT (Commit 7c1a2dc)")
+    print(f"  [3/5] Verified GitHub Source: https://github.com/WHOT-ML/Project-WHOT (Commit 7c1a2dc)")
 
     # 4. Verify Kaggle credentials
     try:
@@ -107,7 +107,7 @@ def prepare_kernel_bundle(mode: str) -> Tuple[Path, str]:
 
     # Write kernel metadata
     metadata = {
-        "id": f"brayanosinaka/{slug}",
+        "id": f"whot-ml/{slug}",
         "title": title,
         "code_file": "kaggle_production_entrypoint.py",
         "language": "python",
@@ -125,7 +125,7 @@ def prepare_kernel_bundle(mode: str) -> Tuple[Path, str]:
     with open(metadata_file, "w", encoding="utf-8") as f:
         json.dump(metadata, f, indent=2)
 
-    return staging_dir, f"brayanosinaka/{slug}"
+    return staging_dir, f"whot-ml/{slug}"
 
 
 def dispatch_to_kaggle(staging_dir: Path, kernel_id: str, mode: str) -> None:

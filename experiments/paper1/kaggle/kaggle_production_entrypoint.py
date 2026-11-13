@@ -59,9 +59,9 @@ def bootstrap_project_whot(dest_dir: Path) -> Path:
     """Clone Project-WHOT from GitHub and checkout frozen commit 7c1a2dc."""
     repo_dir = dest_dir / "Project-WHOT"
     if not repo_dir.exists():
-        print("[KAGGLE BOOTSTRAP] Cloning Project-WHOT from GitHub (https://github.com/Brayan114/Project-WHOT.git)...")
+        print("[KAGGLE BOOTSTRAP] Cloning Project-WHOT from GitHub (https://github.com/WHOT-ML/Project-WHOT.git)...")
         subprocess.run(
-            ["git", "clone", "https://github.com/Brayan114/Project-WHOT.git", str(repo_dir)],
+            ["git", "clone", "https://github.com/WHOT-ML/Project-WHOT.git", str(repo_dir)],
             check=True,
         )
 
@@ -218,7 +218,7 @@ def main() -> None:
         "run_id": run_id,
         "is_dry_run": is_dry_run,
         "mode": args.mode,
-        "source_repository": "Brayan114/Project-WHOT",
+        "source_repository": "WHOT-ML/Project-WHOT",
         "source_revision": FROZEN_SIMULATOR_COMMIT,
         "simulator_version": SIMULATOR_VERSION,
         "baseline_environment": BASELINE_ENVIRONMENT,

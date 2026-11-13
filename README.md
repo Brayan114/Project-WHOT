@@ -18,7 +18,6 @@ Crucially, players hold private hands, draw from a hidden deck that reshuffles u
 - **`tests/`** — Comprehensive test suite containing 109 unit, integration, and property invariant tests.
 - **`experiments/paper1/`** — Experimental harnesses, formal JSON configurations, analysis scripts, and publication figures/tables for the Paper 1 evaluation campaign.
 - **`docs/`** — Formal Phase 0/1 specifications, rules ontology, mathematical proofs, and independent scientific audits.
-- **`WHOT-ML Paper 1 — Manuscript v1.0.md`** — Full research manuscript ready for preprint and peer review.
 - **`CITATION.cff`** — Machine-readable citation metadata.
 - **`LICENSE`** — Permissive MIT open-source license.
 
@@ -30,7 +29,7 @@ WHOT-ML requires Python 3.9 or higher.
 
 ```bash
 # Clone repository
-git clone https://github.com/Brayan114/Project-WHOT.git
+git clone <repository-url>
 cd Project-WHOT
 
 # Install dependencies
@@ -78,13 +77,13 @@ print(f"Game completed in {env.state.turn_count} turns. Winner: Player {env.stat
 
 ## Reproducibility & Scientific Integrity
 
-All experiments in WHOT-ML Paper 1 were executed under a strict frozen-baseline protocol:
+All experiments in WHOT-ML were executed under a strict frozen-baseline protocol:
 
 - **Frozen Commit:** `7c1a2dc23a277fdfb5e9052d4d90e3798fb24ea4`
 - **Environment:** `WHOT-NG-v1.0` (Simulator Version `1.0.0`)
-- **Production Workload:** $N = 12,350$ games executed in isolated Linux cloud containers.
+- **Production Workload:** $N = 16,850$ games executed in isolated Linux cloud containers.
 - **Audit Reports:** Complete independent scientific audits and claim verifications are available in [`docs/`](docs/).
-- **Open Data:** Raw trajectory telemetry and artifact archives are deposited on Zenodo.
+- **Open Data:** Raw trajectory telemetry and artifact archives are deposited in the open research repository.
 
 ---
 
@@ -93,13 +92,11 @@ All experiments in WHOT-ML Paper 1 were executed under a strict frozen-baseline 
 If you use WHOT-ML in your research, please cite our work using the metadata in [`CITATION.cff`](CITATION.cff):
 
 ```bibtex
-@article{osinaka2026whotml,
+@article{whotml2026,
   title   = {WHOT-ML: A Configurable Partially Observable Multi-Agent Environment for Machine Learning Research},
-  author  = {Osinaka, Brayan},
-  journal = {Preprint / Zenodo},
-  year    = {2026},
-  doi     = {10.5281/zenodo.23918026},
-  url     = {https://github.com/Brayan114/Project-WHOT}
+  author  = {Anonymous Author(s)},
+  journal = {Preprint},
+  year    = {2026}
 }
 ```
 
@@ -113,4 +110,4 @@ This project is licensed under the terms of the **MIT License**. See [`LICENSE`]
 
 ## Contact & Contributing
 
-For questions, discussions, or bug reports, please open an issue on the [GitHub Issues](https://github.com/Brayan114/Project-WHOT/issues) tracker.
+For questions, discussions, or bug reports, please open an issue on the repository issue tracker.

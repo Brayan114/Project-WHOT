@@ -1,6 +1,6 @@
 # WHOT-ML — Scientific Specifications & Audit Records
 
-This directory contains the formal experimental protocols, claims freeze specifications, and independent scientific audit records supporting the research manuscript **"WHOT-ML: A Configurable Partially Observable Multi-Agent Environment for Machine Learning Research"** and the accompanying Zenodo research artifact.
+This directory contains the formal experimental protocols, claims freeze specifications, and independent scientific audit records supporting the research manuscript **"WHOT-ML: A Configurable Partially Observable Multi-Agent Environment for Machine Learning Research"** and the accompanying research artifacts.
 
 ---
 

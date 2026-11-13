@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Interactive CLI script: Human vs. Trained PPO Agents in WHOT-ML.
 
-Allows the user (Brayan) to play a full 4-player game of Nigerian WHOT against
+Allows the user to play a full 4-player game of Nigerian WHOT against
 trained deep reinforcement learning agents (Masked PPO).
 
 Usage:
@@ -68,7 +68,7 @@ def format_action(action: Action) -> str:
 def print_banner() -> None:
     """Print the welcoming header for the game."""
     print("=" * 70)
-    print("     WHOT-ML: Human (Brayan) vs. Deep Reinforcement Learning (PPO)")
+    print("     WHOT-ML: Human vs. Deep Reinforcement Learning (PPO)")
     print("     Nigerian WHOT • 4-Player Multi-Agent POMDP Environment")
     print("=" * 70)
     print("You are Player 0. The AI agents control Players 1, 2, and 3.")
@@ -213,7 +213,7 @@ def play_game(
 
     winner = env.winner
     if winner == 0:
-        print("  🏆 VICTORY! Congratulations Brayan, you defeated the AI agents! 🏆")
+        print("  🏆 VICTORY! Congratulations, you defeated the AI agents! 🏆")
     elif winner is not None:
         print(f"  💀 DEFEAT! AI Player {winner} won the game!")
     else:

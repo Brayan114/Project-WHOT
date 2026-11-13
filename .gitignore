@@ -20,7 +20,7 @@ build/
 dist/
 *.egg-info/
 
-# Large experimental production data and runs (archived off-repo on Zenodo)
+# Large experimental production data and runs (archived off-repo)
 experiments/paper1/runs/
 experiments/paper1/raw/
 experiments/paper1/processed/

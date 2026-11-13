@@ -22,7 +22,7 @@ GREEN — PRODUCTION DATA VALIDATED FOR PAPER ANALYSIS
 ```
 
 ### Justification Summary
-1. **Provenance Authenticity:** The full-scale production workload of 12,350 experimental runs was executed entirely in Kaggle Cloud CPU containers, cloned directly from the authoritative repository `Brayan114/Project-WHOT` at frozen commit `7c1a2dc23a277fdfb5e9052d4d90e3798fb24ea4`. Zero production runs were executed on the local development PC.
+1. **Provenance Authenticity:** The full-scale production workload of 12,350 experimental runs was executed entirely in Kaggle Cloud CPU containers, cloned directly from the authoritative repository `WHOT-ML/Project-WHOT` at frozen commit `7c1a2dc23a277fdfb5e9052d4d90e3798fb24ea4`. Zero production runs were executed on the local development PC.
 2. **Dataset Completeness:** Exactly 12,350 scheduled records across EXP-01 through EXP-06 were completed, retrieved, and parsed with zero missing records, zero malformed records, zero unhandled exceptions, and zero seed collisions.
 3. **Information Leakage Zero Invariant:** Across all 449 evaluated observationally equivalent state pairs in EXP-02, hidden opponent cards and deck sequences were rigorously proven to be leak-free ($\text{Leakage} = 0.0\%$).
 4. **Exact Mathematical Table Reconstruction:** Every single numerical entry in Tables 1 through 6 was independently recomputed from raw JSONL and JSON telemetry. All 54 reported metrics match the published tables within documented floating-point rounding tolerances.
@@ -35,7 +35,7 @@ GREEN — PRODUCTION DATA VALIDATED FOR PAPER ANALYSIS
 
 | Verification Item | Specification Requirement | Audited Fact | Status |
 | :--- | :--- | :--- | :--- |
-| **Git Repository** | `Brayan114/Project-WHOT` | `https://github.com/Brayan114/Project-WHOT.git` | **CONFIRMED** |
+| **Git Repository** | `WHOT-ML/Project-WHOT` | `https://github.com/WHOT-ML/Project-WHOT.git` | **CONFIRMED** |
 | **Commit SHA-256** | `7c1a2dc23a277fdfb5e9052d4d90e3798fb24ea4` | `7c1a2dc23a277fdfb5e9052d4d90e3798fb24ea4` | **CONFIRMED** |
 | **Simulator Version** | `1.0.0` | `1.0.0` (`whot_ml/version.py`) | **CONFIRMED** |
 | **Baseline Environment** | `WHOT-NG-v1.0` | `WHOT-NG-v1.0` (`whot_ml/version.py`) | **CONFIRMED** |
@@ -43,7 +43,7 @@ GREEN — PRODUCTION DATA VALIDATED FOR PAPER ANALYSIS
 | **Codebase Integrity** | `git diff 7c1a2dc -- whot_ml/` = empty | 0 lines modified, 0 files added, 0 deleted | **CONFIRMED** |
 | **Local Test Suite** | 109 passing tests | 109 passed in 22.53s (`pytest -q`) | **CONFIRMED** |
 | **Execution Platform** | Kaggle Cloud CPU Container | `Linux 6.6.137+, Python 3.13.15, pytest 8.4.2` | **CONFIRMED** |
-| **Kaggle Kernel ID** | `brayanosinaka/whot-ml-paper-1-production-run` | `brayanosinaka/whot-ml-paper-1-production-run` | **CONFIRMED** |
+| **Kaggle Kernel ID** | `whot-ml/whot-ml-paper-1-production-run` | `whot-ml/whot-ml-paper-1-production-run` | **CONFIRMED** |
 | **Kaggle Status** | `KernelWorkerStatus.COMPLETE` | `KernelWorkerStatus.COMPLETE` (Exit code 0) | **CONFIRMED** |
 | **Execution Time** | ~35–50 min expected | 2,199.69 s (~36.66 min wall-clock compute) | **CONFIRMED** |
 | **Archive Integrity** | SHA-256 matches manifest | `8a82d9f7529610b1beb408395f1bc6b9edd9c8d784dee9887c38e02599d4a13a` | **BITWISE MATCH** |

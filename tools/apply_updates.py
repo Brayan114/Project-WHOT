@@ -25,9 +25,8 @@ replacements = [
 \title{\textbf{WHOT-ML: A Configurable Partially Observable Multi-Agent Environment for Machine Learning Research}}
 
 \author{
-  \textbf{Brayan Osinaka} \\
-  Independent Researcher, Nigeria \\
-  \texttt{brayanjunior101@gmail.com}
+  \textbf{Anonymous Author(s)} \\
+  \texttt{anonymous@anonymous.org}
 }
 \date{}''',
         r'''\documentclass[11pt]{article}
@@ -46,13 +45,12 @@ replacements = [
 \usepackage{hyperref}
 \usepackage{microtype}
 
-\ShortHeadings{WHOT-ML: A Configurable POMDP Environment for Machine Learning}{Osinaka}
+\ShortHeadings{WHOT-ML: A Configurable POMDP Environment for Machine Learning}{Anonymous}
 \firstpageno{1}
 
 \title{\textbf{WHOT-ML: A Configurable Partially Observable Multi-Agent Environment for Machine Learning Research}}
 
-\author{\name Brayan Osinaka \email brayanjunior101@gmail.com \\
-        \addr Independent Researcher, Nigeria}'''
+\author{\name Anonymous Author(s) \email anonymous@anonymous.org}'''
     ),
 
     # 2. Abstract run count and unescaped %
@@ -201,10 +199,10 @@ A central question in partially observable stochastic games is whether policies 
         r'''In EXP-05, penalty stacking acts as a catalyst for defensive stalls, with disabling it reducing truncation rates by over 50\%.'''
     ),
 
-    # 15. Zenodo DOI
+    # 15. Repository link
     (
-        r'''https://doi.org/10.5281/zenodo.14000000''',
-        r'''https://doi.org/10.5281/zenodo.23269787'''
+        r'''https://doi.org/10.5281/repo_placeholder''',
+        r'''https://anonymous.4open.science/r/WHOT-ML'''
     ),
 
     # 16. Reproducibility Checklist updates

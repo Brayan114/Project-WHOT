@@ -323,7 +323,7 @@ def execute_production_suite() -> Dict[str, Any]:
     production_manifest = {
         "run_id": run_id,
         "is_dry_run": False,
-        "source_repository": "Brayan114/Project-WHOT",
+        "source_repository": "WHOT-ML/Project-WHOT",
         "source_revision": preflight["git_commit"],
         "production_runs_started": total_started,
         "production_runs_completed": total_completed,

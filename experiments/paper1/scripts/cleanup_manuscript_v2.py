@@ -29,13 +29,13 @@ old_preamble = r"""\documentclass[acmlarge, nonacm]{acmart}
 
 \title{WHOT-ML: A Configurable Partially Observable Multi-Agent Environment for Machine Learning Research}
 
-\author{Brayan Osinaka}
+\author{Anonymous Author}
 \orcid{0009-0004-1914-1601}
 \affiliation{%
   \institution{Independent Researcher}
   \country{Nigeria}
 }
-\email{brayanjunior101@gmail.com}
+\email{anonymous@anonymous.org}
 
 \begin{abstract}"""
 
@@ -58,9 +58,8 @@ new_preamble = r"""\documentclass[11pt,a4paper]{article}
 \title{\textbf{WHOT-ML: A Configurable Partially Observable Multi-Agent Environment for Machine Learning Research}}
 
 \author{
-  \textbf{Brayan Osinaka} \\
-  Independent Researcher, Nigeria \\
-  \texttt{brayanjunior101@gmail.com}
+  \textbf{Anonymous Author(s)} \\
+  \texttt{anonymous@anonymous.org}
 }
 \date{}
 
