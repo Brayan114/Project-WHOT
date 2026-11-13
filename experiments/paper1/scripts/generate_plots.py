@@ -198,13 +198,19 @@ def plot_fig3_baseline_winrates(pilot: bool = True, suffix: Optional[str] = None
     ax.set_xticks(list(x))
     ax.set_xticklabels(labels)
     ax.set_ylabel("Win Rate")
-    ax.set_ylim(0, 1.05)
+    ax.set_ylim(0, 1.15)
     ax.set_title("RuleBasedAgent Win Rates in Asymmetric Matchups")
-    ax.legend(loc="upper right")
+    ax.legend(loc="upper left", frameon=True, framealpha=0.9)
     plt.tight_layout()
 
     out_path = ExperimentPaths.FIGURES / f"fig3_baseline_winrates_{suffix}.png"
     plt.savefig(out_path, bbox_inches="tight")
+
+    # Also sync to paper figures directories if available
+    for paper_dir in [PROJECT_ROOT / "paper" / "figures", PROJECT_ROOT / "paper" / "tog" / "figures"]:
+        if paper_dir.exists():
+            plt.savefig(paper_dir / f"fig3_baseline_winrates_{suffix}.png", bbox_inches="tight")
+
     plt.close()
     return out_path
 
