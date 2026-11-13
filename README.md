@@ -83,7 +83,7 @@ All experiments in WHOT-ML were executed under a strict frozen-baseline protocol
 - **Environment:** `WHOT-NG-v1.0` (Simulator Version `1.0.0`)
 - **Production Workload:** $N = 16,850$ games executed in isolated Linux cloud containers.
 - **Audit Reports:** Complete independent scientific audits and claim verifications are available in [`docs/`](docs/).
-- **Open Data:** Raw trajectory telemetry and artifact archives are deposited in the open research repository.
+- **Open Data & Code:** Anonymized research repository available at [https://anonymous.4open.science/r/Project-WHOT-7822/](https://anonymous.4open.science/r/Project-WHOT-7822/).
 
 ---
 
@@ -96,7 +96,8 @@ If you use WHOT-ML in your research, please cite our work using the metadata in 
   title   = {WHOT-ML: A Configurable Partially Observable Multi-Agent Environment for Machine Learning Research},
   author  = {Anonymous Author(s)},
   journal = {Preprint},
-  year    = {2026}
+  year    = {2026},
+  url     = {https://anonymous.4open.science/r/Project-WHOT-7822/}
 }
 ```
 
